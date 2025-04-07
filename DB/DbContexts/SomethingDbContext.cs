@@ -1,9 +1,6 @@
 ﻿using Contracts.Dto;
-using Contracts.Interfaces;
 using Dapper;
-using DB.Configuration;
 using DB.Entities;
-using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data;
 using System.Text;
@@ -15,9 +12,9 @@ public class SomethingDbContext : ISomethingDbContext
     private const string SOMETHING_TABLE_NAME = "somethings";
     private readonly string _connectionString;
 
-    public SomethingDbContext(IOptions<PgSqlDbConfiguration> databaseConfigurationOption)
+    public SomethingDbContext(ConnectionStringsProvider connectionStringsProvider)
     {
-        _connectionString = databaseConfigurationOption.Value.ConnectionString;
+        _connectionString = connectionStringsProvider.ConnectionString;
     }
 
     public async Task RewriteSomethingsAsync(IEnumerable<SomethingAddDto> somethingNew, CancellationToken cancellationToken = default)
@@ -88,7 +85,7 @@ public class SomethingDbContext : ISomethingDbContext
                 var getPagedCommand = new CommandDefinition(pagedSql, parameters, transaction: transaction, cancellationToken: cancellationToken);
                 var getTotalCountCommand = new CommandDefinition(totalCountSql, transaction: transaction, cancellationToken: cancellationToken);
 
-                var entities = await connection.QueryAsync<SomethingEntity>(getPagedCommand);
+                var entities = await connection.QueryAsync<Something>(getPagedCommand);
                 var totalCount = await connection.QuerySingleOrDefaultAsync<int>(getTotalCountCommand);
 
                 transaction.Commit();
@@ -116,7 +113,7 @@ public class SomethingDbContext : ISomethingDbContext
         return filterBuilder.ToString();
     }
 
-    private static SomethingPagedResult AsPagedResult(IEnumerable<SomethingEntity> somethingEntities, int totalCount) =>
+    private static SomethingPagedResult AsPagedResult(IEnumerable<Something> somethingEntities, int totalCount) =>
         new SomethingPagedResult(
             somethingEntities
                 .Select(x => new SomethingGetDto(x.Id, x.Code, x.Value ?? string.Empty))
