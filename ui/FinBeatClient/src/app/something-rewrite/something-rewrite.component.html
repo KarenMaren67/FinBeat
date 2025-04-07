@@ -1,0 +1,48 @@
+<div class="add-container">
+  <h2>Добавить новые значения</h2>
+
+  <form (ngSubmit)="onSubmit()" class="add-form">
+    <div class="something-list">
+      <div *ngFor="let item of somethings; let i = index" class="something">
+        <div class="form-group">
+          <label [for]="'code-' + i">Код:</label>
+          <input
+            [id]="'code-' + i"
+            type="number"
+            [(ngModel)]="item.code"
+            [name]="'code-' + i"
+            required
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label [for]="'value-' + i">Значение:</label>
+          <input
+            [id]="'value-' + i"
+            type="text"
+            [(ngModel)]="item.value"
+            [name]="'value-' + i"
+            required
+            class="form-control"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="remove-btn"
+          (click)="removeSomething(i)"
+          [disabled]="somethings.length === 1"
+        >
+          Удалить
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="add-btn" (click)="addSomething()">Добавить</button>
+    <button type="submit" class="submit-btn">Сохранить все</button>
+  </form>
+
+  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+</div>
