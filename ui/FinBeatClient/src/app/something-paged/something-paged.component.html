@@ -1,0 +1,33 @@
+<div class="add-container">
+  <h2>Список значений</h2>
+  <div *ngIf="somethingPaged?.totalCount; else noData">
+    <p-table [value]="somethingPaged.somethings" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Код</th>
+          <th>Значение</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.code }}</td>
+          <td>{{ item.value }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <ng-template #noData>
+    <div class="p-text-center p-m-3">Нет данных для отображения</div>
+  </ng-template>
+
+  <p-paginator
+    (onPageChange)="onPageChange($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="totalCount"
+    [rowsPerPageOptions]="[3, 5, 10, 20]"
+  />
+</div>
