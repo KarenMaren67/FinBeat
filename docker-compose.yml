@@ -37,9 +37,10 @@ services:
       dockerfile: ./Source/VoskanyanFinBeatApi/Dockerfile
     container_name: test-back
     environment:
-      ConnectionStrings__PGSQLDefault: 'User ID=postgres;Password=postgres;Host=kn-db;Port=5432;Database=devkndb;Pooling=true;'
+      ConnectionStrings__PostgreConnectionString: 'User ID=postgres;Password=postgres;Host=kn-db;Port=5432;Database=devkndb;Pooling=true;'
       TZ: "Europe/Moscow"
       ASPNETCORE_URLS: 'http://0.0.0.0:5500'
+      ASPNETCORE_ENVIRONMENT: Development
       Kestrel__Endpoints__Http__Url: 'http://0.0.0.0:5500'
       Swagger__ServerPrefixForSwagger: "/api"
       Swagger__BackendServers__0: "https://kn.com/api"
@@ -56,8 +57,8 @@ services:
     build:
       context: .
       args:
-        environment: presentation
-      dockerfile: ./ui/FinBeatClient
+        environment: production
+      dockerfile: ./ui/FinBeatClient/Dockerfile
     container_name: test-ui
     environment:
       TZ: "Europe/Moscow"

@@ -12,6 +12,7 @@ public class SomethingDataContext : DataConnection, ISomethingDbContext
     public SomethingDataContext(DataOptions<SomethingDataContext> options)
         : base(options.Options)
     {
+        this.CreateTable<Something>(tableOptions: TableOptions.CreateIfNotExists);
     }
 
     public async Task RewriteSomethingsAsync(IEnumerable<SomethingAddDto> somethingNew, CancellationToken cancellationToken = default)
@@ -52,7 +53,14 @@ public class SomethingDataContext : DataConnection, ISomethingDbContext
                 : somethings;
 
             var totalCount = filteredEntities.Count();
-            var pagedResult = filteredEntities.Skip(offset).Take(limit).ToArray();
+            var pagedResult = filteredEntities.Skip(offset < 0 ? 0 : offset);
+            
+            if (limit > 1)
+            {
+                pagedResult.Take(limit);
+            }
+
+            var result = pagedResult.ToArray();
 
             transaction.Commit();
             return AsPagedResult(pagedResult, totalCount);
