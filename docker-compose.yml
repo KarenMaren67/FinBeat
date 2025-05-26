@@ -36,16 +36,15 @@ services:
       context: .
       dockerfile: ./Source/VoskanyanFinBeatApi/Dockerfile
     container_name: test-back
-    environment:
-      ConnectionStrings__PostgreConnectionString: 'User ID=postgres;Password=postgres;Host=kn-db;Port=5432;Database=devkndb;Pooling=true;'
-      TZ: "Europe/Moscow"
-      ASPNETCORE_URLS: 'http://0.0.0.0:5500'
-      ASPNETCORE_ENVIRONMENT: Development
-      Kestrel__Endpoints__Http__Url: 'http://0.0.0.0:5500'
-      Swagger__ServerPrefixForSwagger: "/api"
-      Swagger__BackendServers__0: "https://kn.com/api"
-      Swagger__BackendServers__1: "http://localhost:5500/api"
-      App__CorsOrigins: "http://localhost:4200,http://localhost:8080,http://localhost:8081,http://localhost:3000,http://127.0.0.1:4200,http://kn.com:4200"
+    environment: 
+        ASPNETCORE_ENVIRONMENT: development
+        ConnectionStrings__PostgreConnectionString: 'Host=test-db;Port=5432;User ID=postgres;Password=postgres;Database=FinBeat;Pooling=true;'
+      # TZ: "Europe/Moscow"
+        ASPNETCORE_URLS: 'http://0.0.0.0:5500'
+      # Kestrel__Endpoints__Http__Url: 'http://0.0.0.0:5500'
+        Swagger__ServerPrefixForSwagger: "/api"
+        Swagger__BackendServers__1: "http://localhost:5500/api"
+      # App__CorsOrigins: "http://localhost:4200,http://localhost:8080,http://localhost:8081,http://localhost:3000,http://127.0.0.1:4200"
     depends_on:
       test-db:
         condition: service_healthy
