@@ -2,7 +2,7 @@ x-general: &general
   restart: always
   networks: 
     - test-local
-
+    
 services:
   test-nginx:
     image: nginx:stable-alpine
@@ -10,27 +10,30 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    <<: *general
-
+    restart: always
+    networks: 
+    - test-local
+    - my-shared-kafka-network
+   
   test-db:
-      image: postgres:14.3-alpine
-      container_name: test-db
-      environment:
-        TZ: "Europe/Moscow"
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: FinBeat
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U postgres"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-      volumes:
-        - "testdb-data:/var/lib/postgresql/data"
-      ports:
-        - "5434:5432"
-      <<: *general
-
+    image: postgres:14.3-alpine
+    container_name: test-db
+    environment:
+      TZ: "Europe/Moscow"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: FinBeat
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - "testdb_data:/var/lib/postgresql/data"
+    ports:
+      - "5434:5432"
+    <<: *general
+    
   test-back:
     build:
       context: .
@@ -39,6 +42,7 @@ services:
     environment: 
         ASPNETCORE_ENVIRONMENT: development
         ConnectionStrings__PostgreConnectionString: 'Host=test-db;Port=5432;User ID=postgres;Password=postgres;Database=FinBeat;Pooling=true;'
+        ConnectionStrings__KafkaBootstrapServers: 'test-kafka:29092'
       # TZ: "Europe/Moscow"
         ASPNETCORE_URLS: 'http://0.0.0.0:5500'
       # Kestrel__Endpoints__Http__Url: 'http://0.0.0.0:5500'
@@ -50,8 +54,11 @@ services:
         condition: service_healthy
     ports:
       - 5500:5500
-    <<: *general
-  
+    restart: always
+    networks: 
+    - test-local
+    - my-shared-kafka-network
+    
   test-ui:
     build:
       context: .
@@ -66,9 +73,11 @@ services:
     <<: *general
 
 volumes:
-  testdb-data:
+  testdb_data:
 
 networks:
   test-local:
     name: test-local
     external: false
+  my-shared-kafka-network:
+    external: true

@@ -1,6 +1,6 @@
 ﻿using LinqToDB.Mapping;
 
-namespace DB.Entities;
+namespace DbContracts.Entities;
 
 [Table(Name = "somethings")]
 public class Something

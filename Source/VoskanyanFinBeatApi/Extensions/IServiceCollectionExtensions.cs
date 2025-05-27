@@ -1,5 +1,7 @@
-﻿using DB;
+﻿using Contracts.Interfaces;
+using DB;
 using DB.DbContexts.Linq2DbContexts;
+using Library;
 using Library.Services;
 using LinqToDB;
 using LinqToDB.AspNet;
@@ -24,8 +26,11 @@ public static class IServiceCollectionExtensions
 
         //Custom services
         var postgreConnectionString = configuration.GetConnectionString("PostgreConnectionString");
-
         services.AddSingleton(new ConnectionStringsProvider(postgreConnectionString));
+
+        var kafkaBootstrapServers = configuration.GetConnectionString("KafkaBootstrapServers");
+        services.AddSingleton(new KafkaConnectionStringsProvider(kafkaBootstrapServers));
+        services.AddScoped<IKafkaProducerService, KafkaProducerService>();
 
         services.AddLinqToDBContext<SomethingDataContext>((provider, options) =>
             options.UsePostgreSQL(postgreConnectionString)
@@ -35,5 +40,7 @@ public static class IServiceCollectionExtensions
 
         //Реализация с даппером
         //services.AddTransient<ISomethingDbContext, SomethingDbContext>();
+
+
     }
 }

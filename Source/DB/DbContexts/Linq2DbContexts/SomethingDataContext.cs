@@ -1,5 +1,6 @@
 ﻿using Contracts.Dto;
-using DB.Entities;
+using DbContracts;
+using DbContracts.Entities;
 using LinqToDB;
 using LinqToDB.Data;
 using System.Data;

@@ -1,6 +1,7 @@
 ﻿using Contracts.Dto;
 using Dapper;
-using DB.Entities;
+using DbContracts;
+using DbContracts.Entities;
 using Npgsql;
 using System.Data;
 using System.Text;

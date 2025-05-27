@@ -1,6 +1,6 @@
 ﻿using Contracts.Dto;
 
-namespace DB.DbContexts;
+namespace DbContracts;
 
 public interface ISomethingDbContext
 {
